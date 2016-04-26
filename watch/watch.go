@@ -20,6 +20,14 @@ func watch(dir string, fn func(path string) (string, error)) {
 		return
 	}
 
+	// `/tmp/transporter` is a reserved path, allowing
+	// this would cause an infinite loop on file addition
+	if dir == "/tmp/transporter" {
+		err := errors.New("Directory is reserved.")
+		log.Fatal(err)
+		return
+	}
+
 	watcher, err := inotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
