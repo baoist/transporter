@@ -9,6 +9,7 @@ import (
 
 	"github.com/atotto/clipboard"
 	"github.com/baoist/transporter/notify"
+	"github.com/stacktic/dropbox"
 )
 
 func Upload(path string) (string, error) {
@@ -23,13 +24,7 @@ func upload(path string) (string, error) {
 		return "", errors.New("Unable to create temporary file.")
 	}
 
-	link, err := db.Media(entry.Path)
-	if err != nil {
-		return "", errors.New("Unable to generate link")
-	}
-
-	clipboard.WriteAll(link.URL)
-	notify.Notify("Transporter", "Uploaded and pasted to clipboard.")
+	go createLink(entry)
 
 	entry, err = db.UploadFile(path, tmpFile, true, "")
 	if err != nil {
@@ -37,6 +32,13 @@ func upload(path string) (string, error) {
 	}
 
 	return "", nil
+}
+
+func createLink(entry *dropbox.Entry) {
+	link, _ := db.Media(entry.Path)
+
+	clipboard.WriteAll(link.URL)
+	notify.Notify("Transporter", "Uploaded, pasted to clipboard.")
 }
 
 func buildTmpFile(path string) (tmpPath, filename string) {
