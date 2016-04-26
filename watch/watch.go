@@ -34,7 +34,6 @@ func watch(dir string, fn func(path string) (string, error)) {
 		return
 	}
 
-	log.Println("Watching", dir)
 	watcher.Watch(dir)
 
 	for {
