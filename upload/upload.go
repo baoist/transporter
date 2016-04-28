@@ -21,7 +21,7 @@ func upload(path string) (string, error) {
 
 	entry, err := db.UploadFile(tmpPath, tmpFile, false, "")
 	if err != nil {
-		return "", errors.New("Unable to create temporary file.")
+		return "", errors.New("Unable to save temporary file in Dropbox.")
 	}
 
 	go createLink(entry)
@@ -35,9 +35,13 @@ func upload(path string) (string, error) {
 }
 
 func createLink(entry *dropbox.Entry) {
+	// build a shareable link in dropbox
 	link, _ := db.Media(entry.Path)
 
+	// copy URL to clipboard
 	clipboard.WriteAll(link.URL)
+
+	// create an OS notification
 	notify.Notify("Transporter", "Uploaded, pasted to clipboard.")
 }
 
