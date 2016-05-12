@@ -45,6 +45,10 @@ func createLink(entry *dropbox.Entry) {
 	notify.Notify("Transporter", "Uploaded, pasted to clipboard.")
 }
 
+// Write a temporary (blank) file.
+// This will be uploaded first as a holder,
+// allowing a user to receive a link before
+// a potentially large file is uploaded.
 func buildTmpFile(path string) (tmpPath, filename string) {
 	filename = filepath.Base(path)
 	tmpPath = fmt.Sprintf("/tmp/transporter/%s", filename)
